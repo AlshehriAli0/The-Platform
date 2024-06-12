@@ -38,8 +38,29 @@ export const signUpAction = createServerAction()
       },
     });
 
+    const usernameExists = await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
     if (emailExists) {
       throw new Error("Email already exists try logging in");
+    }
+
+    if (usernameExists) {
+      throw new Error("Username already exists try logging in");
+    }
+
+    const supabase = createClient();
+    const data = {
+      email,
+      password,
+    };
+    const { error } = await supabase.auth.signUp(data);
+
+    if (error) {
+      throw new Error(error.message);
     }
 
     const user = await prisma.user.create({
@@ -54,20 +75,8 @@ export const signUpAction = createServerAction()
     if (!user) {
       throw new Error("User not created");
     }
-
-    const supabase = createClient();
-    const data = {
-      email,
-      password,
-    };
-    const { error } = await supabase.auth.signUp(data);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
     console.log("User created");
 
     revalidatePath("/", "layout");
-    redirect("/");
+    redirect("/auth/complete-signup");
   });
