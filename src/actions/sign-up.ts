@@ -4,9 +4,9 @@ import { ZodError, ZodIssue } from "zod";
 import { createServerAction } from "zsa";
 import z from "zod";
 import prisma from "@/db/db";
-import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import supabase from "@/db/client";
 
 export const signUpAction = createServerAction()
   .input(
@@ -52,7 +52,6 @@ export const signUpAction = createServerAction()
       throw new Error("Username already exists try logging in");
     }
 
-    const supabase = createClient();
     const data = {
       email,
       password,

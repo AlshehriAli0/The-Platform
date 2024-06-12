@@ -1,12 +1,6 @@
 import prisma from "@/db/db";
-import { createClient } from "../supabase/server";
 
-export async function getIdByEmail() {
-  const supabase = createClient();
-  const { data } = await supabase.auth.getUser();
-  const email = data?.user?.email;
-
-  if (!email) throw new Error("User not found");
+export async function getIdByEmail({ email }: { email: string }) {
 
   const user = await prisma.user.findFirst({
     where: {
