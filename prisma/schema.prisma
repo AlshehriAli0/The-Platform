@@ -12,7 +12,6 @@ model User {
   email String @unique
   f_name  String?
   l_name  String?
-  profile_picture Bytes?
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   role Role @default(USER)
@@ -21,7 +20,6 @@ model User {
 
 model Post {
   id    Int @id @default(autoincrement())
-  photo Bytes?
   caption String?
   author User @relation(fields: [authorId], references: [id])
   authorId Int
