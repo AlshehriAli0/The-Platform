@@ -21,7 +21,7 @@ export function SignModule() {
               Create your account to get started.
             </p>
           </div>
-          <form action={executeFormAction} className="space-y-4">
+          <form  action={executeFormAction} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
@@ -74,14 +74,15 @@ export function SignModule() {
                 name="password"
               />
             </div>
-            <Button className="w-full" type="submit">
+            {error && <p className="text-red-600 text-sm">{error.message}</p>}
+            <Button className="w-full" type="submit" disabled={isPending}>
               Sign Up
             </Button>
           </form>
           <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-            Already a user?
+            Already a user? 
             <Link className="underline" href="#">
-              Log in
+               Log in
             </Link>
           </div>
         </div>
