@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { signUpAction } from "@/actions/sign-up";
 import { useServerAction } from "zsa-react";
+import { BarLoader } from "react-spinners";
 
 export function SignModule() {
   const { isPending, executeFormAction, isSuccess, data, isError, error } =
@@ -21,7 +22,7 @@ export function SignModule() {
               Create your account to get started.
             </p>
           </div>
-          <form  action={executeFormAction} className="space-y-4">
+          <form action={executeFormAction} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
@@ -31,6 +32,7 @@ export function SignModule() {
                   placeholder="John"
                   name="firstName"
                   required
+                  disabled={isPending}
                 />
               </div>
               <div className="space-y-2">
@@ -41,6 +43,7 @@ export function SignModule() {
                   placeholder="Doe"
                   name="lastName"
                   required
+                  disabled={isPending}
                 />
               </div>
             </div>
@@ -52,6 +55,7 @@ export function SignModule() {
                 required
                 type="email"
                 name="email"
+                disabled={isPending}
               />
             </div>
             <div className="space-y-2">
@@ -62,6 +66,7 @@ export function SignModule() {
                 required
                 type="text"
                 name="username"
+                disabled={isPending}
               />
             </div>
             <div className="space-y-2">
@@ -72,17 +77,18 @@ export function SignModule() {
                 type="password"
                 placeholder="Password"
                 name="password"
+                disabled={isPending}
               />
             </div>
-            {error && <p className="text-red-600 text-sm">{error.message}</p>}
+            {error && <p className="text-sm text-red-600">{error.message}</p>}
             <Button className="w-full" type="submit" disabled={isPending}>
-              Sign Up
+             {isPending ? <BarLoader color="white" /> : "Sign Up"}
             </Button>
           </form>
           <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-            Already a user? 
+            Already a user?
             <Link className="underline" href="#">
-               Log in
+              Log in
             </Link>
           </div>
         </div>
