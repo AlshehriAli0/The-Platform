@@ -6,12 +6,12 @@ import z from "zod";
 import prisma from "@/db/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import {
   noNumbersOrSpecialChars,
   noWhitespace,
   validUsername,
 } from "@/utils/helpers/refine";
+import createClient from "@/utils/supabase/server";
 
 export const signUpAction = createServerAction()
   .input(
@@ -103,7 +103,6 @@ export const signUpAction = createServerAction()
     };
 
     const supabase = createClient();
-
     const { error } = await supabase.auth.signUp(data);
 
     if (error) {

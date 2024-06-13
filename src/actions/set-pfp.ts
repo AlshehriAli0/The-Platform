@@ -1,3 +1,5 @@
+"use server";
+
 import { z, ZodError, ZodIssue } from "zod";
 import prisma from "@/db/db";
 import { getIdByEmail } from "@/utils/helpers/get-by-mail";

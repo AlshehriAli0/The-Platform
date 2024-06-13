@@ -4,5 +4,5 @@ import React from "react";
 export const dynamic = "force-static";
 
 export default function page() {
-  return <AuthModule />;
+  return( <AuthModule />);
 }
