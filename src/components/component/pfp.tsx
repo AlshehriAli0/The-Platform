@@ -12,11 +12,19 @@ import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import setPfp from "@/actions/set-pfp";
+import BarLoader from "react-spinners/BarLoader";
 
-export function Pfp({ userName }: { userName: string | undefined }) {
+export function Pfp({
+  userName,
+  id,
+}: {
+  userName: string | undefined;
+  id: number;
+}) {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [previewSrc, setPreviewSrc] = useState<string>("/placeholder-user.jpg");
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,20 +44,26 @@ export function Pfp({ userName }: { userName: string | undefined }) {
     setError("");
   };
 
-  const savePfp = async () => {
-    if (!selectedFile) {
-      return;
-    }
+  const savePfp = async (formData: FormData) => {
+    const file = formData.get("file") as File;
+
     try {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const base64 = buffer.toString("base64");
+      setLoading(true);
+      await setPfp(base64, id);
       setError("");
-      await setPfp({ imgFile: selectedFile });
     } catch (err) {
+      setError("An unknown error occurred.");
+      setLoading(false);
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unknown error occurred.");
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -66,31 +80,36 @@ export function Pfp({ userName }: { userName: string | undefined }) {
           </Avatar>
         </div>
         <div className="flex justify-center gap-2">
-          {!selectedFile ? (
-            <React.Fragment>
+          <form action={savePfp} className="flex justify-center gap-2">
+            {!selectedFile ? (
               <label
                 htmlFor="file"
                 className="inline-flex h-10 cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium outline outline-1 outline-black/10 ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               >
                 Upload
               </label>
-              <input
-                id="file"
-                name="file"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </React.Fragment>
-          ) : (
-            <Button onClick={savePfp} variant={"default"}>
-              Use Photo
-            </Button>
-          )}
+            ) : (
+              <Button disabled={loading} type="submit" variant="default">
+                {loading ? <BarLoader color="white" width={70} /> : "Use Photo"}
+              </Button>
+            )}
+            <input
+              id="file"
+              name="file"
+              type="file"
+              defaultValue={previewSrc}
+              accept="image/png, image/jpeg"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </form>
 
           {selectedFile ? (
-            <Button variant="outline" onClick={resetSelection}>
+            <Button
+              variant="outline"
+              disabled={loading}
+              onClick={resetSelection}
+            >
               Reset
             </Button>
           ) : (
