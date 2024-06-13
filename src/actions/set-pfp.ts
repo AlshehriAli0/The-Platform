@@ -1,7 +1,7 @@
 import { z, ZodError, ZodIssue } from "zod";
 import prisma from "@/db/db";
 import { getIdByEmail } from "@/utils/helpers/get-by-mail";
-import supabase from "@/db/client";
+import { createClient } from "@/utils/supabase/server";
 
 interface SetPfpInput {
   imgFile: File;
@@ -26,6 +26,8 @@ const setPfp = async (input: SetPfpInput): Promise<void> => {
     }
 
     const { imgFile } = result.data;
+
+    const supabase = createClient();
 
     const { data, error } = await supabase.auth.getUser();
     if (error || !data || !data.user) {
