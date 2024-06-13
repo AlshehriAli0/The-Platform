@@ -1,3 +1,4 @@
+import SignOutBtn from "@/components/sign-out-btn";
 import createClient from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -9,5 +10,11 @@ export default async function Home() {
     redirect("/auth/sign-up");
   }
 
-  return <main className="h-full w-full bg-black">you are logged in</main>;
+
+  return (
+    <main className="h-screen w-full text-black">
+      <h1>you are logged in</h1>
+      {/* <SignOutBtn /> */}
+    </main>
+  );
 }
