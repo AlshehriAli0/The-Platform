@@ -123,6 +123,6 @@ export const signUpAction = createServerAction()
     }
     console.log("User created");
 
-    revalidatePath("/", "layout");
+    revalidatePath("/auth/complete-signup", "layout");
     redirect("/auth/complete-signup");
   });
