@@ -3,12 +3,15 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { signUpAction } from "@/actions/sign-up";
 import { useServerAction } from "zsa-react";
 import { BarLoader } from "react-spinners";
 
-export function SignModule() {
+type Props = {
+  setLogIn: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function SignModule({ setLogIn }: Props) {
   const { isPending, executeFormAction, isSuccess, data, isError, error } =
     useServerAction(signUpAction);
 
@@ -31,6 +34,7 @@ export function SignModule() {
                   id="firstName"
                   placeholder="John"
                   name="firstName"
+                  minLength={3}
                   required
                   disabled={isPending}
                 />
@@ -41,6 +45,7 @@ export function SignModule() {
                   id="lastName"
                   type="text"
                   placeholder="Doe"
+                  minLength={3}
                   name="lastName"
                   required
                   disabled={isPending}
@@ -75,6 +80,7 @@ export function SignModule() {
                 id="password"
                 required
                 type="password"
+                minLength={8}
                 placeholder="Password"
                 name="password"
                 disabled={isPending}
@@ -82,14 +88,17 @@ export function SignModule() {
             </div>
             {error && <p className="text-sm text-red-600">{error.message}</p>}
             <Button className="w-full" type="submit" disabled={isPending}>
-             {isPending ? <BarLoader color="white" /> : "Sign Up"}
+              {isPending ? <BarLoader color="white" /> : "Sign Up"}
             </Button>
           </form>
           <div className="text-center text-sm text-gray-500 dark:text-gray-400">
             Already a user?
-            <Link className="underline" href="#">
+            <p
+              className="cursor-pointer font-semibold underline transition-all hover:text-black"
+              onClick={() => setLogIn(true)}
+            >
               Log in
-            </Link>
+            </p>
           </div>
         </div>
       </div>

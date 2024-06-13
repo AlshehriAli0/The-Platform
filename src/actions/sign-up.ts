@@ -7,16 +7,61 @@ import prisma from "@/db/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import supabase from "@/db/client";
+import {
+  noNumbersOrSpecialChars,
+  noWhitespace,
+  validUsername,
+} from "@/utils/helpers/refine";
 
 export const signUpAction = createServerAction()
   .input(
-    z.object({
-      email: z.string().email(),
-      password: z.string().min(8, { message: "Password is too short" }),
-      firstName: z.string().min(3, { message: "First name is too short" }),
-      lastName: z.string().min(3, { message: "Last name is too short" }),
-      username: z.string(),
-    }),
+    z
+      .object({
+        email: z
+          .string()
+          .email({ message: "Invalid email format" })
+          .refine((str) => noWhitespace(str), {
+            message: "Email must not contain spaces",
+          }),
+        password: z
+          .string()
+          .min(8, { message: "Password is too short" })
+          .refine((str) => noWhitespace(str), {
+            message: "Password must not contain spaces",
+          }),
+        firstName: z
+          .string()
+          .min(3, { message: "First name is too short" })
+          .refine((str) => noWhitespace(str), {
+            message: "First name must not have any spaces",
+          })
+          .refine((str) => noNumbersOrSpecialChars(str), {
+            message:
+              "Only letters are allowed, no numbers or special characters",
+          }),
+        lastName: z
+          .string()
+          .min(3, { message: "Last name is too short" })
+          .refine((str) => noWhitespace(str), {
+            message: "Last name must not have any spaces",
+          })
+          .refine((str) => noNumbersOrSpecialChars(str), {
+            message:
+              "Only letters are allowed, no numbers or special characters",
+          }),
+        username: z
+          .string()
+          .refine((str) => validUsername(str), {
+            message:
+              "Username can only contain letters, numbers, '@', '-', and '_'",
+          })
+          .refine((str) => noWhitespace(str), {
+            message: "Username must not have any spaces",
+          }),
+      })
+      .refine((data) => data.email.length > 0, {
+        message: "Email is required",
+      }),
 
     {
       type: "formData",

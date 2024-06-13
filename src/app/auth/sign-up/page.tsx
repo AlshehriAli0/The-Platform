@@ -1,10 +1,8 @@
-import { SignModule } from "@/components/component/sign-module";
+import AuthModule from "@/components/auth-module";
 import React from "react";
 
+export const dynamic = "force-static";
+
 export default function page() {
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <SignModule />
-    </div>
-  );
+  return <AuthModule />;
 }
