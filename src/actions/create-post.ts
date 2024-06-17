@@ -43,7 +43,7 @@ export const createPost = createServerAction()
           `posts/${uuidv4()}.${mimeType === "image/jpeg" ? "jpeg" : "png"}`,
           image,
           {
-            contentType: "image/png" || "image/jpeg",
+            contentType: mimeType === "image/jpeg" ? "image/jpeg" : "image/png",
           },
         );
     } catch (error) {

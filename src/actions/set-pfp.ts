@@ -48,7 +48,7 @@ const setPfp = async (base64String: string, idIn: number) => {
         `profile/${id}.${mimeType === "image/jpeg" ? "jpeg" : "png"}`,
         validatedBuffer,
         {
-          contentType: "image/png" || "image/jpeg",
+          contentType: mimeType === "image/jpeg" ? "image/jpeg" : "image/png",
         },
       );
 
