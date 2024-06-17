@@ -1,65 +1,158 @@
+"use client";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
+import { useState } from "react";
+import { LuUndo2 } from "react-icons/lu";
+import { CircularProgressbar } from "react-circular-progressbar";
 
-export function CreatePost() {
+export function CreatePost(props: {
+  userName: string;
+  setShow: (show: boolean) => void;
+}) {
+  const [image, setImage] = useState<File>();
+  const [previewSrc, setPreviewSrc] = useState<string>("/placeholder.svg");
+  const [chars, setChars] = useState<number>(0);
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      e.target.value = "";
+      setImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewSrc(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const resetSelection = () => {
+    setImage(undefined);
+    setPreviewSrc("/placeholder.svg");
+    setError("");
+  };
+
+  const countChars = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const chars = (e.target.value.length / 200) * 100;
+    setChars(chars);
+  };
+
+  const getColor = (percentage: number) => {
+    return percentage > 90 ? "crimson" : "black";
+  };
+
   return (
-    <div className="mx-auto max-w-md rounded-lg border bg-white p-6 shadow-lg dark:bg-gray-950">
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold">Create a Post</h2>
-          <p className="text-gray-500 dark:text-gray-400">
-            Add an image and a caption to your post.
-          </p>
-        </div>
-        <div className="grid gap-4">
+    <div className="fixed mx-auto px-4 py-8 sm:scale-110 sm:px-6 lg:px-8">
+      <div className="rounded-lg border bg-white p-6 shadow-md dark:bg-gray-950">
+        <h2 className="mb-4 flex justify-between text-2xl font-bold">
+          New Post
+          <Button
+            onClick={resetSelection}
+            className="h-1 w-1 p-4"
+            variant="outline"
+          >
+            X
+          </Button>
+        </h2>
+        <form className="grid gap-6">
           <div>
-            <Label htmlFor="image">Image</Label>
-            <div className="mt-2 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pb-6 pt-5 dark:border-gray-600">
-              <div className="space-y-1 text-center">
-                <CloudUploadIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="flex text-sm text-gray-600 dark:text-gray-400">
-                  <label
-                    className="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500 dark:bg-gray-950 dark:text-gray-400"
-                    htmlFor="image"
-                  >
-                    <span>Upload a file</span>
-                    <Input className="sr-only" id="image" type="file" />
-                  </label>
-                  <p className="pl-1">or drag and drop</p>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  PNG, JPG, GIF up to 10MB
-                </p>
+            <Label
+              className="mb-2 block font-medium opacity-50"
+              htmlFor="image"
+            >
+              Add an Image and Caption to post on
+              <span className="font-bold"> @{props.userName}</span>
+            </Label>
+            <div className="relative">
+              <div className="flex h-64 w-full items-center justify-center overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                <Image
+                  alt="Preview"
+                  className="h-full w-full object-cover"
+                  height={400}
+                  src={previewSrc}
+                  style={{
+                    aspectRatio: "400/400",
+                    objectFit: "cover",
+                  }}
+                  width={400}
+                />
               </div>
+              {!image ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Button size="sm" variant="outline">
+                    <UploadIcon className="mr-2 h-5 w-5" />
+                    Upload Image
+                  </Button>
+                </div>
+              ) : (
+                <div className="absolute right-1 top-1 z-10 flex items-center justify-center">
+                  <Button onClick={resetSelection} size="sm" variant="outline">
+                    <LuUndo2 />
+                  </Button>
+                </div>
+              )}
+              <input
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                id="image"
+                type="file"
+                accept={"image/png, image/jpeg"}
+                onChange={handleFileChange}
+              />
             </div>
           </div>
           <div>
-            <Label htmlFor="caption">Caption</Label>
+            <Label
+              className="mb-1 flex items-center justify-between p-1 font-medium"
+              htmlFor="caption"
+            >
+              Caption
+              <CircularProgressbar
+                value={chars}
+                className="text-black"
+                strokeWidth={22}
+                styles={{
+                  root: {
+                    width: "24px",
+                  },
+                  path: {
+                    stroke: getColor(chars),
+                    transition: "stroke-dashoffset 0.2s ease 0s",
+                  },
+                  trail: {
+                    stroke: "ghostwhite",
+                  },
+                }}
+              />
+            </Label>
             <Textarea
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-950 dark:text-white dark:focus:border-indigo-500"
+              name="caption"
+              onChange={countChars}
+              className="focus:ring-primary-500 dark:focus:ring-primary-400 w-full rounded-lg border border-gray-300 p-2 text-[16px] transition-all focus:outline-none focus:ring-2 dark:border-gray-700"
               id="caption"
-              placeholder="Write a caption for your post..."
-              rows={3}
+              placeholder="Add a caption..."
+              maxLength={200}
             />
           </div>
-        </div>
-        <div className="flex justify-end">
-          <Button>Post</Button>
-        </div>
+          <Button className="w-full" type="submit">
+            Post
+          </Button>
+        </form>
       </div>
     </div>
   );
 }
 
-function CloudUploadIcon(props: any) {
+function UploadIcon(props: any) {
   return (
     <svg
       {...props}
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="36"
+      height="36"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -67,9 +160,9 @@ function CloudUploadIcon(props: any) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
-      <path d="M12 12v9" />
-      <path d="m16 16-4-4-4 4" />
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" x2="12" y1="3" y2="15" />
     </svg>
   );
 }

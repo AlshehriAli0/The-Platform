@@ -23,6 +23,7 @@ export function Pfp({ userName, id }: { userName: string; id: number }) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      e.target.value = "";
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
