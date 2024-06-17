@@ -7,10 +7,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const setPfp = async (base64String: string, idIn: number) => {
-  console.log("idIn", idIn);
-
   const buffer = Buffer.from(base64String, "base64").buffer;
-  console.log("buffersize", Buffer.byteLength(buffer));
 
   const schema = z.object({
     buffer: z
