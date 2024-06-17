@@ -71,7 +71,7 @@ export function CreatePost(props: {
               <div className="flex h-64 w-full items-center justify-center overflow-hidden rounded-lg dark:bg-gray-800">
                 <Image
                   alt="Preview"
-                  className="h-full w-full border-2 border-black/[0.04] object-cover"
+                  className="h-full w-full border-2 border-black/5 object-cover "
                   height={400}
                   src={previewSrc}
                   style={{
