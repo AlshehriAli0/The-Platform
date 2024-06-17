@@ -51,7 +51,7 @@ export function CreatePost(props: {
         <h2 className="mb-4 flex justify-between text-2xl font-bold">
           New Post
           <Button
-            onClick={resetSelection}
+            onClick={() => props.setShow(false)}
             className="h-1 w-1 p-4"
             variant="outline"
           >
@@ -68,10 +68,10 @@ export function CreatePost(props: {
               <span className="font-bold"> @{props.userName}</span>
             </Label>
             <div className="relative">
-              <div className="flex h-64 w-full items-center justify-center overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+              <div className="flex h-64 w-full items-center justify-center overflow-hidden rounded-lg dark:bg-gray-800">
                 <Image
                   alt="Preview"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full border-2 border-black/[0.04] object-cover"
                   height={400}
                   src={previewSrc}
                   style={{
@@ -89,7 +89,7 @@ export function CreatePost(props: {
                   </Button>
                 </div>
               ) : (
-                <div className="absolute right-1 top-1 z-10 flex items-center justify-center">
+                <div className="absolute right-2 top-2 z-10 flex items-center justify-center">
                   <Button onClick={resetSelection} size="sm" variant="outline">
                     <LuUndo2 />
                   </Button>
