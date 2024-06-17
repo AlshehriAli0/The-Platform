@@ -3,7 +3,6 @@
 import prisma from "@/db/db";
 import { getMimeTypeFromArrayBuffer } from "@/utils/helpers/refine";
 import createClient from "@/utils/supabase/server";
-import { decode, encode } from "base64-arraybuffer";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
