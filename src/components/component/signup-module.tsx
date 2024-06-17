@@ -36,12 +36,14 @@ export function SignModule({ setLogIn }: Props) {
                   minLength={3}
                   required
                   disabled={isPending}
+                  className="text-lg"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
+                  className="text-lg"
                   type="text"
                   placeholder="Doe"
                   minLength={3}
@@ -56,6 +58,7 @@ export function SignModule({ setLogIn }: Props) {
               <Input
                 id="email"
                 placeholder="example@email.com"
+                className="text-lg"
                 required
                 type="email"
                 name="email"
@@ -68,6 +71,7 @@ export function SignModule({ setLogIn }: Props) {
                 id="username"
                 placeholder="johndoe123"
                 required
+                className="text-lg"
                 type="text"
                 name="username"
                 disabled={isPending}
@@ -79,6 +83,7 @@ export function SignModule({ setLogIn }: Props) {
                 id="password"
                 required
                 type="password"
+                className="text-lg"
                 minLength={8}
                 placeholder="Password"
                 name="password"

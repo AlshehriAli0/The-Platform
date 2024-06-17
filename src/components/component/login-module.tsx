@@ -25,7 +25,7 @@ export function LoginModule({ setLogIn }: Props) {
     useServerAction(logInAction);
   return (
     <div className="flex h-screen items-center justify-center">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-2 text-center">
           <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
           <CardDescription>
@@ -37,6 +37,7 @@ export function LoginModule({ setLogIn }: Props) {
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
+                className="text-lg"
                 id="email"
                 placeholder="m@example.com"
                 required
@@ -46,7 +47,13 @@ export function LoginModule({ setLogIn }: Props) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input minLength={8} id="password" name="password" type="password" />
+              <Input
+                className="text-lg"
+                minLength={8}
+                id="password"
+                name="password"
+                type="password"
+              />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
