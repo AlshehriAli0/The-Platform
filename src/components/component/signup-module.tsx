@@ -11,8 +11,7 @@ type Props = {
 };
 
 export function SignModule({ setLogIn }: Props) {
-  const { isPending, executeFormAction, isSuccess, data, isError, error } =
-    useServerAction(signUpAction);
+  const { isPending, executeFormAction, error } = useServerAction(signUpAction);
 
   return (
     <div className="flex h-screen items-center justify-center">

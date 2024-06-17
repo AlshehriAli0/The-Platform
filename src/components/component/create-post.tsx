@@ -1,4 +1,5 @@
 "use client";
+
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,16 +8,19 @@ import { useState } from "react";
 import { LuUndo2 } from "react-icons/lu";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { createPost } from "@/actions/create-post";
+import { useServerAction } from "zsa-react";
+import { BarLoader } from "react-spinners";
 
 export function CreatePost(props: {
   userName: string;
   setShow: (show: boolean) => void;
 }) {
+  const { isPending, execute, isSuccess, data, isError, error } =
+    useServerAction(createPost);
+
   const [image, setImage] = useState<File>();
   const [previewSrc, setPreviewSrc] = useState<string>("/placeholder.svg");
   const [chars, setChars] = useState<number>(0);
-  const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,7 +38,6 @@ export function CreatePost(props: {
   const resetSelection = () => {
     setImage(undefined);
     setPreviewSrc("/placeholder.svg");
-    setError("");
   };
 
   const countChars = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -47,17 +50,28 @@ export function CreatePost(props: {
   };
 
   const savePost = async (formData: FormData) => {
-    const image = formData.get("image") as File;
+    if (!image) {
+      return;
+    }
     const caption = formData.get("caption") as string;
 
+    console.log(image);
+    console.log(caption);
+
     try {
-      setLoading(true);
       const arrayBuffer = await image.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const base64 = buffer.toString("base64");
-      await createPost({ image: base64, caption });
+      console.log("is  sent");
+      const result = await execute({ image: base64, caption });
+      if (result[1]) {
+        console.error(result[1]);
+      } else {
+        console.log(result[0]);
+        props.setShow(false); 
+      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -70,11 +84,12 @@ export function CreatePost(props: {
             onClick={() => props.setShow(false)}
             className="h-1 w-1 p-4"
             variant="outline"
+            disabled={isPending}
           >
             X
           </Button>
         </h2>
-        <form className="grid gap-6">
+        <form action={savePost} className="grid gap-6">
           <div>
             <Label
               className="mb-2 block font-medium opacity-50"
@@ -106,7 +121,12 @@ export function CreatePost(props: {
                 </div>
               ) : (
                 <div className="absolute right-2 top-2 z-10 flex items-center justify-center">
-                  <Button onClick={resetSelection} size="sm" variant="outline">
+                  <Button
+                    disabled={isPending}
+                    onClick={resetSelection}
+                    size="sm"
+                    variant="outline"
+                  >
                     <LuUndo2 />
                   </Button>
                 </div>
@@ -154,8 +174,14 @@ export function CreatePost(props: {
               maxLength={200}
             />
           </div>
-          <Button className="w-full" type="submit">
-            Post
+          {error && (
+            <div className="text-sm text-red-500">
+              {error?.message ?? "Something went wrong"}
+            </div>
+          )}
+
+          <Button disabled={isPending} className="w-full" type="submit">
+            {isPending ? <BarLoader color="white" /> : "Post"}
           </Button>
         </form>
       </div>
