@@ -16,7 +16,7 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime? @updatedAt
   role Role @default(USER)
-  avatar String?
+  avatar String @default("profile/placeholder-user.jpg")
   posts Post[]
 }
 
