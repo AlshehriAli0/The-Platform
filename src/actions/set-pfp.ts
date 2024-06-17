@@ -1,17 +1,53 @@
 "use server";
 
 import prisma from "@/db/db";
+import { getMimeTypeFromArrayBuffer } from "@/utils/helpers/refine";
 import createClient from "@/utils/supabase/server";
-import { decode } from "base64-arraybuffer";
+import { decode, encode } from "base64-arraybuffer";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
-const setPfp = async (buffer: string, id: number) => {
+const setPfp = async (base64String: string, idIn: number) => {
+  console.log("idIn", idIn);
+
+  const buffer = Buffer.from(base64String, "base64").buffer;
+  console.log("buffersize", Buffer.byteLength(buffer));
+
+  const schema = z.object({
+    buffer: z
+      .any()
+      .refine(
+        (buffer) =>
+          buffer instanceof ArrayBuffer && Buffer.byteLength(buffer) <= 4000000,
+        {
+          message: "File is too large, must be less than 4MB",
+        },
+      )
+      .refine(
+        (buffer) => {
+          const mimeType = getMimeTypeFromArrayBuffer(buffer);
+          return mimeType === "image/png" || mimeType === "image/jpeg";
+        },
+        {
+          message: "File must be a PNG or JPEG image",
+        },
+      ),
+    id: z.number({
+      invalid_type_error: "ID must be a number",
+      required_error: "ID is required",
+    }),
+  });
+
+  const { buffer: validatedBuffer, id } = schema.parse({
+    buffer,
+    id: idIn,
+  });
   try {
     const supabase = createClient();
 
     const { data, error } = await supabase.storage
       .from("photos")
-      .upload(`profile/${id}.png`, decode(buffer), {
+      .upload(`profile/${id}.png`, validatedBuffer, {
         contentType: "image/png" || "image/jpeg",
       });
 

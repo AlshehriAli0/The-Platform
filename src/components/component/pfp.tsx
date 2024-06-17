@@ -14,13 +14,7 @@ import React from "react";
 import setPfp from "@/actions/set-pfp";
 import BarLoader from "react-spinners/BarLoader";
 
-export function Pfp({
-  userName,
-  id,
-}: {
-  userName: string | undefined;
-  id: number;
-}) {
+export function Pfp({ userName, id }: { userName: string; id: number }) {
   const [selectedFile, setSelectedFile] = useState<File>();
   const [previewSrc, setPreviewSrc] = useState<string>("/placeholder-user.jpg");
   const [error, setError] = useState<string>("");
