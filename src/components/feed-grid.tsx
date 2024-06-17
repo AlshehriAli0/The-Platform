@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import { CreatePost } from "./component/create-post";
 import { FaPlus } from "react-icons/fa6";
+import FeedCards from "./component/feed-cards";
 
 export default function FeedGrid({ userName }: { userName: string }) {
   const [show, setShow] = useState(false);
 
   return (
-    <main className="flex h-screen w-full flex-col items-center justify-center text-2xl text-black">
+    <main className="flex h-screen w-full flex-col text-2xl text-black">
+      <FeedCards />
       {!show ? (
         <button
           onClick={() => setShow(true)}
