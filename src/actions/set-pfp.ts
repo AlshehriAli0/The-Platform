@@ -40,12 +40,17 @@ const setPfp = async (base64String: string, idIn: number) => {
   });
   try {
     const supabase = createClient();
+    const mimeType = getMimeTypeFromArrayBuffer(validatedBuffer);
 
     const { data, error } = await supabase.storage
       .from("photos")
-      .upload(`profile/${id}.png`, validatedBuffer, {
-        contentType: "image/png" || "image/jpeg",
-      });
+      .upload(
+        `profile/${id}.${mimeType === "image/jpeg" ? "jpeg" : "png"}`,
+        validatedBuffer,
+        {
+          contentType: "image/png" || "image/jpeg",
+        },
+      );
 
     if (!data || error) {
       return Promise.reject(new Error(error.message));

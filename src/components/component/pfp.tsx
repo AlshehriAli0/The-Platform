@@ -43,10 +43,10 @@ export function Pfp({ userName, id }: { userName: string; id: number }) {
     const file = formData.get("file") as File;
 
     try {
+      setLoading(true);
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const base64 = buffer.toString("base64");
-      setLoading(true);
       await setPfp(base64, id);
       setError("");
     } catch (err) {

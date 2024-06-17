@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { LuUndo2 } from "react-icons/lu";
 import { CircularProgressbar } from "react-circular-progressbar";
+import { createPost } from "@/actions/create-post";
 
 export function CreatePost(props: {
   userName: string;
@@ -45,6 +46,21 @@ export function CreatePost(props: {
     return percentage > 90 ? "crimson" : "black";
   };
 
+  const savePost = async (formData: FormData) => {
+    const image = formData.get("image") as File;
+    const caption = formData.get("caption") as string;
+
+    try {
+      setLoading(true);
+      const arrayBuffer = await image.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const base64 = buffer.toString("base64");
+      await createPost({ image: base64, caption });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="fixed mx-auto px-4 py-8 sm:scale-110 sm:px-6 lg:px-8">
       <div className="rounded-lg border bg-white p-6 shadow-md dark:bg-gray-950">
@@ -71,7 +87,7 @@ export function CreatePost(props: {
               <div className="flex h-64 w-full items-center justify-center overflow-hidden rounded-lg dark:bg-gray-800">
                 <Image
                   alt="Preview"
-                  className="h-full w-full border-2 border-black/5 object-cover "
+                  className="h-full w-full border-2 border-black/5 object-cover"
                   height={400}
                   src={previewSrc}
                   style={{
@@ -98,6 +114,7 @@ export function CreatePost(props: {
               <input
                 className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                 id="image"
+                name="image"
                 type="file"
                 accept={"image/png, image/jpeg"}
                 onChange={handleFileChange}
