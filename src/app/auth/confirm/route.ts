@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
       token_hash,
     });
     if (!error) {
-      redirectTo.pathname = "/auth/complete-signup";
       redirectTo.searchParams.delete("next");
       return NextResponse.redirect(redirectTo);
     }

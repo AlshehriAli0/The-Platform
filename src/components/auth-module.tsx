@@ -7,7 +7,7 @@ import { LoginModule } from "./component/login-module";
 export default function AuthModule() {
   const [logIn, setLogIn] = useState<boolean>(false);
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center px-4">
       {logIn ? (
         <LoginModule setLogIn={setLogIn} />
       ) : (
