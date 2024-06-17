@@ -1,3 +1,4 @@
+import CreatePostBtn from "@/components/create-post-btn";
 import SignOutBtn from "@/components/sign-out-btn";
 import createClient from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -14,7 +15,7 @@ export default async function Home() {
   return (
     <main className="h-screen w-full text-black">
       <h1>you are logged in</h1>
-      {/* <SignOutBtn /> */}
+      <CreatePostBtn />
     </main>
   );
 }
