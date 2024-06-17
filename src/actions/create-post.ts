@@ -6,6 +6,7 @@ import { createServerAction } from "zsa";
 import createClient from "@/utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { getIdByEmail } from "@/utils/helpers/get-by-mail";
+import { revalidatePath } from "next/cache";
 
 export const createPost = createServerAction()
   .input(
@@ -71,10 +72,13 @@ export const createPost = createServerAction()
           caption,
         },
       });
-      console.log("post created");
-      return Promise.resolve({ data: data.path, error: null });
+      revalidatePath("/", "layout");
+      return { data: true };
     } catch (error) {
-      console.error("Error:", error);
-      return Promise.reject(error);
+      console.error("Error updating recipient:", error);
+      return {
+        data: false,
+        error: "Too many requests please try again later",
+      };
     }
   });

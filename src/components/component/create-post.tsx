@@ -10,13 +10,13 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import { createPost } from "@/actions/create-post";
 import { useServerAction } from "zsa-react";
 import { BarLoader } from "react-spinners";
+import { toast } from "sonner";
 
 export function CreatePost(props: {
   userName: string;
   setShow: (show: boolean) => void;
 }) {
-  const { isPending, execute, isSuccess, data, isError, error } =
-    useServerAction(createPost);
+  const { error, isPending } = useServerAction(createPost);
 
   const [image, setImage] = useState<File>();
   const [previewSrc, setPreviewSrc] = useState<string>("/placeholder.svg");
@@ -62,14 +62,20 @@ export function CreatePost(props: {
       const arrayBuffer = await image.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       const base64 = buffer.toString("base64");
-      console.log("is  sent");
-      const result = await execute({ image: base64, caption });
-      if (result[1]) {
-        console.error(result[1]);
-      } else {
-        console.log(result[0]);
-        props.setShow(false); 
-      }
+      props.setShow(false);
+      const updatePromise = createPost({ image: base64, caption }).then(
+        (res) => {
+          if (res[1]) {
+            throw new Error(res[1].message);
+          }
+          return res;
+        },
+      );
+      toast.promise(updatePromise, {
+        loading: "Posting...",
+        success: "Post created",
+        error: "Too many requests, please try again later",
+      });
     } catch (error) {
       console.error(error);
     }
@@ -180,7 +186,12 @@ export function CreatePost(props: {
             </div>
           )}
 
-          <Button disabled={isPending} className="w-full" type="submit">
+          <Button
+            onClick={() => toast}
+            disabled={isPending}
+            className="w-full"
+            type="submit"
+          >
             {isPending ? <BarLoader color="white" /> : "Post"}
           </Button>
         </form>
