@@ -1,13 +1,23 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { formatTime } from "@/utils/helpers/date";
 import Image from "next/image";
 
-export function FeedCard(
-  image: string,
-  caption: string,
-  avatar: string,
-  userName: string,
-  time: string,
-) {
+type FeedCards = {
+  image: string;
+  caption: string;
+  avatar: string;
+  userName: string;
+  time: Date;
+};
+
+export function FeedCard({
+  image,
+  caption,
+  avatar,
+  userName,
+  time,
+}: FeedCards) {
+  const formattedTime = formatTime(time);
   return (
     <div className="mx-auto grid w-full grid-cols-1 gap-6 p-4 px-12 sm:grid-cols-2 md:p-6 lg:grid-cols-3">
       <div className="max-h-[80vh] overflow-y-auto rounded-lg bg-white shadow-lg dark:bg-gray-950">
@@ -31,7 +41,9 @@ export function FeedCard(
             </Avatar>
             <div>
               <p className="text-sm font-medium">{userName}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{time}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {formattedTime}
+              </p>
             </div>
           </div>
         </div>

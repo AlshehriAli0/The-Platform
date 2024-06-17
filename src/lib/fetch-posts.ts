@@ -1,7 +1,8 @@
 import createClient from "@/utils/supabase/server";
 import prisma from "@/db/db";
+import { Posts } from "./types";
 
-export const fetchPosts = async (page: number) => {
+export const fetchPosts = async (page: number): Promise<Posts> => {
   try {
     const supabase = createClient();
     const posts = await prisma?.post.findMany({
@@ -11,17 +12,23 @@ export const fetchPosts = async (page: number) => {
         created_at: "desc",
       },
       include: {
-        author: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            avatar: true,
+          },
+        },
       },
     });
 
     if (!posts) {
-      return page;
+      throw new Error("No posts found");
     }
 
     const imagePaths = posts.map((post) => post.image);
     if (typeof imagePaths === "undefined") {
-      return page;
+      throw new Error("No image paths found");
     }
 
     const uniqueUsers = Array.from(
@@ -35,7 +42,7 @@ export const fetchPosts = async (page: number) => {
 
     if (imageUrlsError || !imageUrlsData) {
       console.error("Error generating signed URLs for images:", imageUrlsError);
-      return { posts: [], avatars: {} };
+      return { posts: [] };
     }
 
     const { data: avatarUrlsData, error: avatarUrlsError } =
@@ -46,7 +53,7 @@ export const fetchPosts = async (page: number) => {
         "Error generating signed URLs for avatars:",
         avatarUrlsError,
       );
-      return { posts: [], avatars: {} };
+      return { posts: [] };
     }
     const userAvatarUrls = uniqueUsers.reduce((acc: any, user, index) => {
       if (!user?.id) {
@@ -62,7 +69,7 @@ export const fetchPosts = async (page: number) => {
       image: imageUrlsData[index].signedUrl || post.image,
       author: {
         ...post.author,
-        avatar: userAvatarUrls[post.author.id],
+        avatar: userAvatarUrls[post.author.id] as string,
       },
     }));
     return {
@@ -70,6 +77,6 @@ export const fetchPosts = async (page: number) => {
     };
   } catch (error) {
     console.log(error);
-    return page;
+    throw error;
   }
 };

@@ -1,10 +1,17 @@
 export type Post = {
   id: number;
+  author: Author;
   image: string;
-  caption: string;
+  caption: string | null;
   authorId: number;
-  created_at: string;
-  updated_at: string;
+  created_at: Date;
+  updated_at: Date | null;
+};
+
+export type Author = {
+  id: number;
+  username: string;
+  avatar: string;
 };
 
 export type Posts = {

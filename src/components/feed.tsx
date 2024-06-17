@@ -3,6 +3,8 @@ import FeedGrid from "./feed-grid";
 import createClient from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getIdByEmail } from "@/utils/helpers/get-by-mail";
+import { fetchPosts } from "@/lib/fetch-posts";
+import FeedCards from "./component/feed-cards";
 
 export default async function Feed() {
   const supabase = createClient();
@@ -19,11 +21,11 @@ export default async function Feed() {
   }
 
   const { userName: un } = await getIdByEmail({ email: user?.email });
-  // Fetch posts from the server so that root page can display skeleton
-  // while the data is loading
+  const posts = await fetchPosts(0);
   return (
     <main className="h-screen w-full">
       <FeedGrid userName={un} />
+      <FeedCards posts={posts} />
     </main>
   );
 }
