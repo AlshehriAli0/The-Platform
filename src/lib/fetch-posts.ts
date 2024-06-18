@@ -1,8 +1,8 @@
 import createClient from "@/utils/supabase/server";
 import prisma from "@/db/db";
-import { Posts } from "./types";
+import { Post, Posts } from "./types";
 
-export const fetchPosts = async (page: number): Promise<Posts> => {
+export const fetchPosts = async (page: number) => {
   try {
     const supabase = createClient();
     const posts = await prisma?.post.findMany({
@@ -42,7 +42,7 @@ export const fetchPosts = async (page: number): Promise<Posts> => {
 
     if (imageUrlsError || !imageUrlsData) {
       console.error("Error generating signed URLs for images:", imageUrlsError);
-      return { posts: [] };
+      throw new Error("Error generating signed URLs for images");
     }
 
     const { data: avatarUrlsData, error: avatarUrlsError } =
@@ -53,7 +53,7 @@ export const fetchPosts = async (page: number): Promise<Posts> => {
         "Error generating signed URLs for avatars:",
         avatarUrlsError,
       );
-      return { posts: [] };
+      throw new Error("Error generating signed URLs for avatars");
     }
     const userAvatarUrls = uniqueUsers.reduce((acc: any, user, index) => {
       if (!user?.id) {

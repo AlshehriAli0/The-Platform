@@ -1,11 +1,15 @@
 import React from "react";
 import { FeedCard } from "./feed-card";
-import { Post } from "@/lib/types";
+import type { Post } from "@/lib/types";
 
-export default function FeedCards(posts: any) {
+type Props = {
+  posts: Post[];
+};
+
+export default function FeedCards({ posts }: Props) {
   return (
     <React.Fragment>
-      {posts.map((post: Post, index: number) => (
+      {posts.map((post, index: number) => (
         <FeedCard
           key={index}
           image={post.image}
